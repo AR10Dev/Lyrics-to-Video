@@ -65,7 +65,7 @@ Contributions, issues, and feature requests are welcome! Feel free to check [iss
 
 ## 📜 License
 
-This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
+This project is [GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/) licensed.
 
 ## 🙏 Acknowledgements
 
