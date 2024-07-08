@@ -18,7 +18,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Load audio file
     println!("🎵 Loading audio file...");
-    let audio_file = File::open("../audio.mp3")?;
+    let audio_path = "../audio.mp3";
+    let audio_file = File::open(audio_path)?;
 
     println!("🎬 Generating video...");
     let source: Decoder<File> = Decoder::new(audio_file)?;
@@ -109,7 +110,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             "-i",
             "output_frames/frame_%05d.png",
             "-i",
-            "../audio.mp3",
+            audio_path,
             "-c:v",
             "libx264",
             "-c:a",
