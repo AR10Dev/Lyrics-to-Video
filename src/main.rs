@@ -1,126 +1,62 @@
-use ab_glyph::{FontRef, PxScale};
-use image::{Rgb, RgbImage};
-use imageproc::drawing::{draw_text_mut, text_size};
-use rodio::{Decoder, Source};
 use std::error::Error;
 use std::fs::File;
+use std::io::BufReader;
+use serde::Deserialize;
 
-struct Lyric {
-    text: String,
-    start_time: f32,
-    end_time: f32,
+mod lyrics;
+mod video;
+mod audio;
+
+use lyrics::Lyric;
+use video::{generate_frames, generate_video};
+use audio::load_audio;
+
+#[derive(Deserialize)]
+struct Config {
+    width: u32,
+    height: u32,
+    fps: u32,
+    font_height: f32,
+    audio_path: String,
+    font_path: String,
+    output_directory: String,
+    lyrics: Vec<Lyric>,
+}
+
+fn load_config() -> Result<Config, Box<dyn Error>> {
+    let file = File::open("config.json")?;
+    let reader = BufReader::new(file);
+    let config: Config = serde_json::from_reader(reader)?;
+    Ok(config)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // Load font
-    println!("🔍 Loading font...");
-    let font = FontRef::try_from_slice(include_bytes!("../font.ttf"))?;
+    let config = load_config()?;
 
-    // Load audio file
-    println!("🎵 Loading audio file...");
-    let audio_path = "../audio.mp3";
-    let audio_file = File::open(audio_path)?;
+    let font = load_font(&config.font_path)?;
+    let (source, total_duration) = load_audio(&config.audio_path)?;
 
-    println!("🎬 Generating video...");
-    let source: Decoder<File> = Decoder::new(audio_file)?;
-    let total_duration = source.total_duration().unwrap().as_secs_f32();
-
-    // Define lyrics (you would replace this with actual lyrics)
-    let lyrics = vec![
-        Lyric {
-            text: "First line of lyrics".to_string(),
-            start_time: 0.0,
-            end_time: 2.0,
-        },
-        Lyric {
-            text: "Second line of lyrics".to_string(),
-            start_time: 2.0,
-            end_time: 4.0,
-        },
-        // Add more lyrics...
-    ];
-
-    // Video settings
-    let width = 1920;
-    let height = 1080;
-    let fps = 30;
-    let total_frames = (total_duration * fps as f32) as u32;
+    let total_frames = (total_duration * config.fps as f32) as u32;
 
     println!("🖼️ Total duration: {} seconds", total_duration);
     println!("🎞️ Total frames: {}", total_frames);
 
-    // Text settings
-    let font_height = 60.0;
-    let scale = PxScale {
-        x: font_height,
-        y: font_height,
-    };
-
-    // Create output directory
-    std::fs::create_dir_all("output_frames")?;
-
-    // Generate frames
-    println!("🎨 Generating frames...");
-    for frame in 0..total_frames {
-        let time = frame as f32 / fps as f32;
-
-        // Create a new image for this frame
-        let mut image = RgbImage::new(width, height);
-
-        // Fill the background with black
-        for pixel in image.pixels_mut() {
-            *pixel = Rgb([0u8, 0u8, 0u8]);
-        }
-
-        // Find the current lyric
-        if let Some(lyric) = lyrics
-            .iter()
-            .find(|l| time >= l.start_time && time < l.end_time)
-        {
-            // Calculate text size and position
-            let (text_width, text_height) = text_size(scale, &font, &lyric.text);
-            let x = (width as i32 - text_width as i32) / 2;
-            let y = (height as i32 - text_height as i32) / 2;
-
-            // Draw text
-            draw_text_mut(
-                &mut image,
-                Rgb([255u8, 255u8, 255u8]),
-                x,
-                y,
-                scale,
-                &font,
-                &lyric.text,
-            );
-        }
-
-        // Save the frame
-        let frame_filename = format!("output_frames/frame_{:05}.png", frame);
-        image.save(&frame_filename)?;
-    }
-
-    println!("🖌️ Frames generated successfully!");
-
-    // Use ffmpeg to combine frames and audio (you would need to install ffmpeg separately)
-    println!("📽️ Generating video using ffmpeg...");
-    std::process::Command::new("ffmpeg")
-        .args(&[
-            "-framerate",
-            &fps.to_string(),
-            "-i",
-            "output_frames/frame_%05d.png",
-            "-i",
-            audio_path,
-            "-c:v",
-            "libx264",
-            "-c:a",
-            "aac",
-            "-shortest",
-            "output_video.mp4",
-        ])
-        .output()?;
-
-    println!("✅ Video generated successfully!");
+    generate_frames(
+        config.width,
+        config.height,
+        config.fps,
+        config.font_height,
+        &font,
+        &config.lyrics,
+        total_frames,
+    )?;
+    generate_video(config.fps, &config.audio_path, total_duration)?;
 
     Ok(())
+}
+
+fn load_font(font_path: &str) -> Result<ab_glyph::FontVec, Box<dyn Error>> {
+    let font_data = std::fs::read(font_path)?;
+    let font = ab_glyph::FontVec::try_from_vec(font_data)?;
+    Ok(font)
 }
