@@ -46,9 +46,9 @@ The program will generate a series of PNG frames in the `output_frames` director
 
 You can modify the following settings in `src/main.rs`:
 
-- Video resolution: Adjust `width` and `height` variables
-- Frame rate: Modify the `fps` variable
-- Font size: Change the `font_height` variable
+- Video resolution: Adjust `WIDTH` and `HEIGHT` constants
+- Frame rate: Modify the `FPS` constant
+- Font size: Change the `FONT_HEIGHT` constant
 
 ## 📦 Dependencies
 
