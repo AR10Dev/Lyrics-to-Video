@@ -1,8 +1,6 @@
 use image::{Rgb, RgbImage};
 use imageproc::drawing::{draw_text_mut, text_size};
 use std::error::Error;
-use std::fs::File;
-use std::path::Path;
 use std::fs;
 
 pub fn create_output_directory() -> Result<(), Box<dyn Error>> {
@@ -15,7 +13,7 @@ pub fn generate_frames(
     height: u32,
     fps: u32,
     font_height: f32,
-    font: &ab_glyph::FontRef,
+    font: &ab_glyph::FontVec,
     lyrics: &[crate::lyrics::Lyric],
     total_frames: u32,
 ) -> Result<(), Box<dyn Error>> {

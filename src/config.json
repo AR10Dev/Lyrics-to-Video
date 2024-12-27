@@ -1,0 +1,21 @@
+{
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "font_height": 60.0,
+  "audio_path": "audio.mp3",
+  "font_path": "font.ttf",
+  "output_directory": "output_frames",
+  "lyrics": [
+    {
+      "text": "First line of lyrics",
+      "start_time": 0.0,
+      "end_time": 2.0
+    },
+    {
+      "text": "Second line of lyrics",
+      "start_time": 2.0,
+      "end_time": 4.0
+    }
+  ]
+}

@@ -1,8 +1,9 @@
-use ab_glyph::{FontRef, PxScale};
 use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use serde::Deserialize;
 
+#[derive(Deserialize)]
 pub struct Lyric {
     pub text: String,
     pub start_time: f32,

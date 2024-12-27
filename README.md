@@ -34,7 +34,31 @@ Before you begin, ensure you have met the following requirements:
 
 1. Place your audio file (MP3 format) in the project root and name it `audio.mp3`.
 2. Place your font file (TTF format) in the project root and name it `font.ttf`.
-3. Edit the `lyrics` vector in `src/lyrics.rs` to include your lyrics and their timings.
+3. Create a `config.json` file in the project root with the following structure:
+   ```json
+   {
+     "width": 1920,
+     "height": 1080,
+     "fps": 30,
+     "font_height": 60.0,
+     "audio_path": "audio.mp3",
+     "font_path": "font.ttf",
+     "output_directory": "output_frames",
+     "lyrics": [
+       {
+         "text": "First line of lyrics",
+         "start_time": 0.0,
+         "end_time": 2.0
+       },
+       {
+         "text": "Second line of lyrics",
+         "start_time": 2.0,
+         "end_time": 4.0
+       }
+       // Add more lyrics...
+     ]
+   }
+   ```
 4. Run the program:
    ```
    cargo run --release
@@ -44,11 +68,15 @@ The program will generate a series of PNG frames in the `output_frames` director
 
 ## ⚙️ Configuration
 
-You can modify the following settings in `src/main.rs`:
+You can modify the following settings in `config.json`:
 
-- Video resolution: Adjust `width` and `height` fields in the `Config` struct
-- Frame rate: Modify the `fps` field in the `Config` struct
-- Font size: Change the `font_height` field in the `Config` struct
+- Video resolution: Adjust `width` and `height` fields
+- Frame rate: Modify the `fps` field
+- Font size: Change the `font_height` field
+- Audio file path: Update the `audio_path` field
+- Font file path: Update the `font_path` field
+- Output directory: Change the `output_directory` field
+- Lyrics: Add or modify the lyrics and their timings in the `lyrics` array
 
 ## 📦 Dependencies
 
