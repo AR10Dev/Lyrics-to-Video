@@ -34,7 +34,7 @@ Before you begin, ensure you have met the following requirements:
 
 1. Place your audio file (MP3 format) in the project root and name it `audio.mp3`.
 2. Place your font file (TTF format) in the project root and name it `font.ttf`.
-3. Edit the `lyrics` vector in `src/main.rs` to include your lyrics and their timings.
+3. Edit the `lyrics` vector in `src/lyrics.rs` to include your lyrics and their timings.
 4. Run the program:
    ```
    cargo run --release
@@ -46,9 +46,9 @@ The program will generate a series of PNG frames in the `output_frames` director
 
 You can modify the following settings in `src/main.rs`:
 
-- Video resolution: Adjust `WIDTH` and `HEIGHT` constants
-- Frame rate: Modify the `FPS` constant
-- Font size: Change the `FONT_HEIGHT` constant
+- Video resolution: Adjust `width` and `height` fields in the `Config` struct
+- Frame rate: Modify the `fps` field in the `Config` struct
+- Font size: Change the `font_height` field in the `Config` struct
 
 ## 📦 Dependencies
 
